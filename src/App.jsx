@@ -1,32 +1,24 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
+import FlashCard from './components/flashCard.jsx'
+import data from './api/data.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className='title'>
+      <h1>Guess Who?</h1>
+      <h2>Test your knowledge in soccer</h2>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      {data.map((data)=>(
+        <FlashCard
+         question={data.question}
+         answer={data.answer}
+          />
+      ))}
+      
     </div>
   )
 }
