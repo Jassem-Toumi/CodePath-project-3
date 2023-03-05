@@ -1,79 +1,227 @@
-#root {
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
+} */
 
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  font-family: 'Shantell Sans', cursive;
+  font-family: "Shantell Sans", cursive;
   color: white;
 }
 
-
- body {
+body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
+  min-width: 100vw;
   min-height: 100vh;
 }
 
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.title{
+.title {
   position: absolute;
-  top: 100px;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
-
-.flash-card{
+.flash-card {
   background-color: #1e1e1e;
-  border-radius: 10px;
   width: 600px;
   height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  perspective: 1000px; 
-
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  padding: 10px 20px;
+  border-radius: 7px;
+  outline: none;
+  border-color: #9ecaed;
+  box-shadow: 0 0 10px #9ecaed;
+}
+h2.question,
+h2.answer {
+  padding: 0 30px;
 }
 
-/* 
-.answer{
+.flash-card:hover {
+  border-color: #cf53f4;
+  box-shadow: 0 0 10px #7667ea;
+}
+
+.isFlipped {
+  transform: rotateY(180deg);
+}
+
+.backCard.is-flipping {
   visibility: hidden;
+}
+/* .frontCard{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+.backCard{
+  
 } */
+
+.frontCard,
+.backCard {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+.answer,
+.question {
+  text-align: center;
+  width: fit-content;
+  height: fit-content;
+}
+.backCard {
+  transform: rotateY(180deg);
+}
+
+/* CSS */
+.nextBtn {
+  appearance: none;
+  background-color: white;
+  border: 2px solid #1a1a1a;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: black;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: normal;
+  /* min-height: 80px; */
+  width: 150px;
+  outline: none;
+  padding: 10px 18px;
+  margin: 10px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  will-change: transform;
+}
+
+.nextBtn:disabled {
+  pointer-events: none;
+}
+
+.nextBtn:hover {
+  color: #fff;
+  background-color: #1e1e1e;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+  border: 2px solid white;
+}
+
+.nextBtn:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+.copyRight{
+  position: absolute;
+  bottom : 0;
+  right: 15px
+}
+
+/* media queries */
+
+/* Medium - Ipads */
+
+@media screen and (max-width: 912px) {
+  .title {
+    background-color: #dff1ff;
+    border: 2px solid #dadada;
+    border-radius: 7px;
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+    color: #1e1e1e;
+    padding: 20px;
+  }
+}
+/* small screens - Mobile */
+@media screen and (max-width: 768px) {
+  .flash-card {
+    min-width: 300px;
+    min-height: 150px;
+  }
+
+  .nextBtn {
+    max-width: 100px;
+    max-height: 50px;
+    font-size: 14px;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .title {
+    background-color: #dff1ff;
+    position: relative;
+    width: 250px;
+    height: 110px;
+    top: 15%;
+    border: 2px solid #dadada;
+    border-radius: 7px;
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+    color: #1e1e1e;
+  }
+
+  h2.question,
+  h2.answer {
+    font-size: 15px;
+    padding: 0 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+  h2 {
+    font-size: 15px;
+  }
+  h3 {
+    font-size: 15px;
+  }
+  #root {
+    padding: 0.8rem;
+  }
+  .flash-card {
+    width: 280px;
+    height: 150px;
+  }
+  .copyRight{
+    font-size: 12px;
+  }
+}

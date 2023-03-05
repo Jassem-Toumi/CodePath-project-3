@@ -1,14 +1,18 @@
 import React from "react";
+import {useState}  from "react";
 
-const FlashCard = (props) => {
+
+const FlashCard = ({data, currentCard, isflipped, handleClick, isflipping}) => {
+
   return (
-    <div className="flash-card">
+    //flash-card
+    <div className={`flash-card ${isflipped? "isFlipped" : ""}`} onClick={handleClick}>
         <div className="frontCard">
-        <h2 className="question">{props.question}</h2>
+        <h2 className="question">{data[currentCard].question}</h2>
         </div>
-        <dir className="backCard">
-        <h2 className="answer">{props.answer}</h2>
-        </dir>
+        <div className={`backCard ${isflipping ? "is-flipping" : ""}`}>
+        <h2 className="answer">{data[currentCard].answer}</h2>
+        </div>
     </div>
   );
 };
