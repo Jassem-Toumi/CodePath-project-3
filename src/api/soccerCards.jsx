@@ -1,5 +1,5 @@
 
-const data = [
+const soccerCards = [
     {
         question: "Who won the Ballon d'Or award for best men's football player in 2013?",
         answer: "Cristiano Ronaldo"
@@ -42,4 +42,4 @@ const data = [
     }
 ]
 
-export default data
+export default soccerCards;
