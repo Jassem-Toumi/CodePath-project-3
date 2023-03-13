@@ -39,8 +39,11 @@ const tennisCards = [
     question:"Who was the first player from South America to win a Grand Slam singles title in tennis history?",
     answer: "Gabriela Sabatini, who won the US Open in 1990."
   },
-  
+  {
+    question: "name the first player to win a Grand Slam singles title in tennis history?",
 
+    answer: "Neville Chamberlain, who won the US Open in 1877."  }
+  
 ];
 
 export default tennisCards;

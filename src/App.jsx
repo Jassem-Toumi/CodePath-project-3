@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import FlashCard from "./components/flashCard.jsx";
+import Controls from "./components/controls.jsx";
+import DropDown from "./components/DropDown.jsx";
+import StatsDashboard from "./components/statsDashboard.jsx";
 import soccerCards from "./api/soccerCards.jsx";
 import tennisCards from "./api/tennisCards.jsx";
 import soccerBackground from "./assets/soccerBackground.jpg";
 import tennisBackground from "./assets/tennisBackground.jpg";
+import creatorBackground from "./assets/creatorBG.jpg";
 
 const soccerArrLenght = soccerCards.length;
 const tennisArrLength = tennisCards.length;
@@ -12,16 +16,32 @@ function App() {
   const [isflipping, setIsFlipping] = useState(false);
   const [currentCard, setCurrentCard] = useState(0);
   const handleNext = () => {
-    if (
-      currentCard < soccerArrLenght - 1 ||
-      currentCard < tennisArrLength - 1
-    ) {
-      setCurrentCard(currentCard + 1);
-      setIsFlipping(true);
-      setTimeout(() => {
-        setIsFlipping(false);
-      }, 700);
+    if (showSoccerCards) {
+      if (currentCard < soccerArrLenght - 1) {
+        setCurrentCard(currentCard + 1);
+        setIsFlipping(true);
+        setTimeout(() => {
+          setIsFlipping(false);
+        }, 700);
+      }
+    } else if (showTennisCards) {
+      if (currentCard < tennisArrLength - 1) {
+        setCurrentCard(currentCard + 1);
+        setIsFlipping(true);
+        setTimeout(() => {
+          setIsFlipping(false);
+        }, 700);
+      }
+    } else if (renderGame) {
+      if (currentCard < arrayLength - 1) {
+        setCurrentCard(currentCard + 1);
+        setIsFlipping(true);
+        setTimeout(() => {
+          setIsFlipping(false);
+        }, 700);
+      }
     }
+
     clearInputField();
   };
   const handleBack = () => {
@@ -47,31 +67,41 @@ function App() {
   const [showSoccerCards, setShowSoccerCards] = useState(true);
   const [showTennisCards, setShowTennisCards] = useState(false);
   const displaySoccerCards = () => {
-    if (showSoccerCards === false && showTennisCards === true) {
+    if (
+      (showSoccerCards === false && showTennisCards === true) ||
+      renderGame === true
+    ) {
       setShowSoccerCards(true);
       setShowTennisCards(false);
+      setRender(false);
       setCurrentStreak(0);
       setLongestStreak(0);
       clearInputField();
+      setArrayInput([]);
+      setCardsCreated(0);
+      setPrevAnswer("");
     }
   };
   const displayTennisCards = () => {
-    if (showTennisCards === false && showSoccerCards === true) {
+    if (
+      (showTennisCards === false && showSoccerCards === true) ||
+      renderGame === true
+    ) {
       setShowTennisCards(true);
       setShowSoccerCards(false);
+      setRender(false);
       setCurrentStreak(0);
       setLongestStreak(0);
       clearInputField();
+      setArrayInput([]);
+      setCardsCreated(0);
+      setPrevAnswer("");
     }
   };
 
   useEffect(() => {
     setCurrentCard(0);
-  }, [showSoccerCards] || [showTennisCards]);
-
-  document.body.style.backgroundImage = `url(${
-    showSoccerCards ? soccerBackground : tennisBackground
-  })`;
+  }, [showSoccerCards] || [showTennisCards] || [renderGame]);
 
   const preventD = (e) => {
     e.preventDefault();
@@ -127,6 +157,25 @@ function App() {
           showRed();
         }
       }
+    } else if (renderGame) {
+      if (
+        arrayInput[currentCard].answer
+          .toLocaleLowerCase()
+          .includes(answer.toLocaleLowerCase()) &&
+        answer !== "" &&
+        prevAnswer !== answer
+      ) {
+        setCurrentStreak(currentStreak + 1);
+        showGreen();
+      } else {
+        if (prevAnswer != answer && answer !== "") {
+          if (currentStreak > longestStreak) {
+            setLongestStreak(currentStreak);
+          }
+          setCurrentStreak(0);
+          showRed();
+        }
+      }
     }
   };
 
@@ -147,7 +196,7 @@ function App() {
       // setCorrect(''); // Reset the state variable to trigger the effect again
     }, 500);
     return () => clearTimeout(timer);
-  }
+  };
 
   // impelementing Fisher-Yates shuffle algorithm
   const shuffle = (array) => {
@@ -157,74 +206,273 @@ function App() {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
       //destructuring
-      [array[currentIndex], array[randomIndex]] = [ array[randomIndex], array[currentIndex] ];
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
     }
     return array;
-  }
+  };
   const handleShuffle = () => {
     if (showSoccerCards) {
       shuffle(soccerCards);
     } else if (showTennisCards) {
       shuffle(tennisCards);
+    } else if (renderGame) {
+      shuffle(arrayInput);
     }
+  };
+
+  const [createOwn, setCreateOwn] = useState(false);
+  const showCreateOwn = () => {
+    if (
+      (createOwn === false && showSoccerCards === true) ||
+      showTennisCards === true
+    ) {
+      setCreateOwn(true);
+      setShowSoccerCards(false);
+      setShowTennisCards(false);
+      setCurrentStreak(0);
+      setLongestStreak(0);
+      clearInputField();
+    }
+  };
+
+  const handleCreateOwn = () => {
+    if (createOwn === true && renderGame === false) {
+      setShowSoccerCards(false);
+      setShowTennisCards(false);
+      setCreateOwn(false);
+      setRender(true);
+      setCurrentStreak(0);
+      setLongestStreak(0);
+      clearInputField();
+      setCardsCreated(0);
+      setCurrentCard(0);
+      setPrevAnswer("");
+    }
+  };
+
+  const [NewQuestion, setNewQuestion] = useState("");
+  const [NewAnswer, setNewAnswer] = useState("");
+  const [renderGame, setRender] = useState(false);
+  const [arrayInput, setArrayInput] = useState([]);
+  const [numberOfCards, setNumberOfCards] = useState(0);
+  const [cardsCreated, setCardsCreated] = useState(0);
+  const arrayLength = arrayInput.length;
+  const handleCreateNewCard = (e) => {
+    e.preventDefault();
+    // setAddNewCard(!addNewCard);
+    if (numberOfCards > cardsCreated) {
+      createCard();
+    }
+  };
+
+  const createCard = () => {
+    if (
+      NewQuestion !== "" &&
+      NewQuestion != null &&
+      NewAnswer !== "" &&
+      NewAnswer != null
+    ) {
+      let newInput = { question: NewQuestion, answer: NewAnswer };
+      setArrayInput((prevInputs) => [...prevInputs, newInput]);
+      setCardsCreated(cardsCreated + 1);
+    }
+    setNewQuestion("");
+    setNewAnswer("");
+  };
+
+  useEffect(() => {
+    if (numberOfCards > 0) {
+      const checker = cardsCreated - numberOfCards;
+      if (checker === 0) {
+        handleCreateOwn();
+      }
+    }
+  }, [cardsCreated]);
+
+  const handleNumberOfCards = (e) => {
+    //prevent negative numbers
+    if (e.target.value < 0) {
+      e.target.value = 0;
+    } else if (e.target.value > 50) {
+      e.target.value = 50;
+    }
+    setNumberOfCards(e.target.value);
+  };
+
+  const handleCancel = () => {
+    setCreateOwn(false);
+    setRender(false);
+    setShowSoccerCards(true);
+    setNewQuestion("");
+    setNewAnswer("");
+    setCurrentStreak(0);
+    setLongestStreak(0);
+    clearInputField();
+    setCardsCreated(0);
+    setArrayInput([]);
+    setNumberOfCards(0);
+  };
+
+  //settting Background image of the app
+  if (showSoccerCards) {
+    document.body.style.backgroundImage = `url(${soccerBackground})`;
+  } else if (showTennisCards) {
+    document.body.style.backgroundImage = `url(${tennisBackground})`;
+  } else if (renderGame || createOwn) {
+    document.body.style.backgroundImage = `url(${creatorBackground})`;
   }
 
-
-  return (
-    <div className="App">
-      <div className="title" style={{ backgroundColor: color }}>
-        <h1>Guess Who?</h1>
-        <h2>Test your knowledge in {showSoccerCards ? "soccer" : "tennis"}</h2>
-        <h3>
-          Number of cards: {showSoccerCards ? soccerArrLenght : tennisArrLength}
-        </h3>
-        <div className="stats">
-          <h3>Current Streak: {currentStreak}</h3>
-          <h3>Longest Streak: {longestStreak}</h3>
-        </div>
-      </div>
-
-      <FlashCard
-        data={showSoccerCards ? soccerCards : tennisCards}
-        currentCard={currentCard}
-        isflipped={isflipped}
-        handleClick={handleClick}
-        isflipping={isflipping}
-      />
-      <div className="form-container">
-        <form onSubmit={preventD}>
+  if (createOwn) {
+    return (
+      <div className="createOwn">
+        <h1>Create your own cards</h1>
+        <form onSubmit={preventD} className="createOwn-form">
+          <label>Number of Cards</label>
           <input
-            onChange={handleInputChange}
-            type="text"
-            placeholder="Enter your answer"
-            value={answer}
+            type="number"
+            onChange={handleNumberOfCards}
+            id="numberOfCards"
           />
+          <h3># Cards created: {cardsCreated}</h3>
+
+          <span className="cardsContent">
+            <input
+              onChange={(e) => setNewQuestion(e.target.value)}
+              value={NewQuestion}
+              placeholder="Question"
+            />
+            <input
+              onChange={(e) => setNewAnswer(e.target.value)}
+              value={NewAnswer}
+              placeholder="Answer"
+            />
+          </span>
+          <span className="creator-btns">
+            <button id="cancelBtn" onClick={handleCancel}>
+              Cancel
+            </button>
+            <button id="addBtn" onClick={handleCreateNewCard}>
+              Add
+            </button>
+          </span>
         </form>
-        <button className="checkBtn" onClick={checkAnswer}>
-          Check
-        </button>
       </div>
+    );
+  } else if (renderGame) {
+    return (
+      <div className="App">
+        <StatsDashboard
+        color = {color}
+        currentStreak = {currentStreak}
+        longestStreak = {longestStreak}
+        numOfCard = {arrayInput.length}
+        />
 
-      <div className="btnS">
-        <button onClick={handleBack} className="nextBtn">
-          Back
-        </button>
-        <button onClick={handleNext} className="nextBtn">
-          Next
-        </button>
-      </div>
-      <button onClick={handleShuffle} className="shuffleBtn">Shuffle</button>
+        <FlashCard
+          data={arrayInput}
+          currentCard={currentCard}
+          isflipped={isflipped}
+          handleClick={handleClick}
+          isflipping={isflipping}
+        />
 
-      <div className="dropdown">
-        <button className="dropbtn">Select Topic</button>
-        <div className="dropdown-content">
-          <span onClick={displaySoccerCards}>Soccer</span>
-          <span onClick={displayTennisCards}>Tennis</span>
-        </div>
+        <Controls
+          preventD={preventD}
+          handleInputChange={handleInputChange}
+          answer={answer}
+          checkAnswer={checkAnswer}
+          handleBack={handleBack}
+          handleNext={handleNext}
+          handleShuffle={handleShuffle}
+        />
+
+        <DropDown
+          displaySoccerCards={displaySoccerCards}
+          displayTennisCards={displayTennisCards}
+          showCreateOwn={showCreateOwn}
+        />
+
+        <p className="copyRight">&copy; Jassem Toumi</p>
       </div>
-      <p className="copyRight">&copy; Jassem Toumi</p>
-    </div>
-  );
+    );
+  } else if (showSoccerCards) {
+    return (
+      <div className="App">
+
+        <StatsDashboard
+        color = {color}
+        currentStreak = {currentStreak}
+        longestStreak = {longestStreak}
+        numOfCard = {soccerArrLenght}
+        />
+
+        <FlashCard
+          data={soccerCards}
+          currentCard={currentCard}
+          isflipped={isflipped}
+          handleClick={handleClick}
+          isflipping={isflipping}
+        />
+
+        <Controls
+          preventD={preventD}
+          handleInputChange={handleInputChange}
+          answer={answer}
+          checkAnswer={checkAnswer}
+          handleBack={handleBack}
+          handleNext={handleNext}
+          handleShuffle={handleShuffle}
+        />
+
+        <DropDown
+          displaySoccerCards={displaySoccerCards}
+          displayTennisCards={displayTennisCards}
+          showCreateOwn={showCreateOwn}
+        />
+
+        <p className="copyRight">&copy; Jassem Toumi</p>
+      </div>
+    );
+  } else if (showTennisCards) {
+    return (
+      <div className="App">
+
+        <StatsDashboard
+        color = {color}
+        currentStreak = {currentStreak}
+        longestStreak = {longestStreak}
+        numOfCard = {tennisArrLength}
+        />
+        <FlashCard
+          data={tennisCards}
+          currentCard={currentCard}
+          isflipped={isflipped}
+          handleClick={handleClick}
+          isflipping={isflipping}
+        />
+        <Controls
+          preventD={preventD}
+          handleInputChange={handleInputChange}
+          answer={answer}
+          checkAnswer={checkAnswer}
+          handleBack={handleBack}
+          handleNext={handleNext}
+          handleShuffle={handleShuffle}
+        />
+
+        <DropDown
+          displaySoccerCards={displaySoccerCards}
+          displayTennisCards={displayTennisCards}
+          showCreateOwn={showCreateOwn}
+        />
+
+        <p className="copyRight">&copy; Jassem Toumi</p>
+      </div>
+    );
+  }
 }
 
 export default App;
