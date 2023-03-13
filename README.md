@@ -6,7 +6,7 @@ This web app: **is a gussing game where the user can pick a topic (soccer/tennis
 
 Time spent: **5** hours spent in total
 
-## Required Features
+## Required Features for part 1
 
 The following **required** functionality is completed:
 
@@ -16,24 +16,40 @@ The following **required** functionality is completed:
 - [x] **Clicking on the card shows the corresponding component of the information pair**
 - [x] **Clicking the next button displays a random new card**
 
+## Required Features for part 2
+
+The following **required** functionality is completed:
+
+- [x] **The user can enter their guess in a box before seeing the flipside of the card**
+- [x] **Clicking on a submit button shows visual feedback about whether the answer was correct or incorrect**
+- [x] **A back button is displayed on the card and can be used to return to the previous card in a set sequence**
+- [x] **A next button is displayed on the card and can be used to navigate to the next card in a set sequence**
+
+
 The following **optional** features are implemented:
 
 - [ ] Cards contains images in addition to or in place of text
 - [ ] Cards have different visual styles such as color based on their category
-  - [ ] *visual style implemented*
+- [x] *visual style implemented
 
 The following **additional** features are implemented:
 
-- [x] Drop down menu that gives the user 2 options soccer/tennis which corresponds to topic of the gussing game
-- [x] Chaning background image when the user selects a different topic (soccer/tennis)
+- [x] Drop down menu that gives the user 3 options soccer/tennis which corresponds to topic of the gussing game or "create your own quiz" option 
+- [x] Chaning background image when the user selects a different topic (soccer/tennis/customized)
 - [x] The app is responsive for both mobile and desktop
+- [x] User can guess the answer and keep track of their current streak & longest streak
+- [x] A shuffle button can be used to randomize the order of the cards
+- [x] User can create their own Quiz
+- [x] User can save the quiz they created 
+- [x] A user’s answer may be counted as correct even when it is slightly different from the target answer
+
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented required features:
 
-<a href="https://www.loom.com/share/86b74d5905e94b2d827ee6ca40d1fe23">
-    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/86b74d5905e94b2d827ee6ca40d1fe23-with-play.gif">
+  <a href="https://www.loom.com/share/0a827158ef4f4af79e7bf4497e805610">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0a827158ef4f4af79e7bf4497e805610-with-play.gif">
   </a>
 
 <!-- Replace this with whatever GIF tool you used! -->
