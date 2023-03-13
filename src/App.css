@@ -384,6 +384,19 @@ font-size: 20px;
   width: 100%;
 }
 
+.saveQuizzBtn{
+  position: absolute;
+  top: 100px;
+  left: 20px;
+  background-color: #7667ea;
+}
+
+.saveQuizzBtn:hover{
+  background-color:#6453e9 ;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+  border: 2px solid white;
+}
 
 /* media queries */
 

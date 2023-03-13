@@ -13,49 +13,9 @@ import creatorBackground from "./assets/creatorBG.jpg";
 const soccerArrLenght = soccerCards.length;
 const tennisArrLength = tennisCards.length;
 function App() {
+  const [isflipped, updateFlipState] = useState(false);
   const [isflipping, setIsFlipping] = useState(false);
   const [currentCard, setCurrentCard] = useState(0);
-  const handleNext = () => {
-    if (showSoccerCards) {
-      if (currentCard < soccerArrLenght - 1) {
-        setCurrentCard(currentCard + 1);
-        setIsFlipping(true);
-        setTimeout(() => {
-          setIsFlipping(false);
-        }, 700);
-      }
-    } else if (showTennisCards) {
-      if (currentCard < tennisArrLength - 1) {
-        setCurrentCard(currentCard + 1);
-        setIsFlipping(true);
-        setTimeout(() => {
-          setIsFlipping(false);
-        }, 700);
-      }
-    } else if (renderGame) {
-      if (currentCard < arrayLength - 1) {
-        setCurrentCard(currentCard + 1);
-        setIsFlipping(true);
-        setTimeout(() => {
-          setIsFlipping(false);
-        }, 700);
-      }
-    }
-
-    clearInputField();
-  };
-  const handleBack = () => {
-    if (currentCard > 0) {
-      setCurrentCard(currentCard - 1);
-      setIsFlipping(true);
-      setTimeout(() => {
-        setIsFlipping(false);
-      }, 700);
-    }
-    clearInputField();
-  };
-
-  const [isflipped, updateFlipState] = useState(false);
   const handleClick = () => {
     updateFlipState(!isflipped);
   };
@@ -69,11 +29,13 @@ function App() {
   const displaySoccerCards = () => {
     if (
       (showSoccerCards === false && showTennisCards === true) ||
-      renderGame === true
+      renderGame === true || showSavedGame === true 
     ) {
       setShowSoccerCards(true);
       setShowTennisCards(false);
       setRender(false);
+      setCreateOwn(false);
+      setShowSavedGame(false);
       setCurrentStreak(0);
       setLongestStreak(0);
       clearInputField();
@@ -85,11 +47,13 @@ function App() {
   const displayTennisCards = () => {
     if (
       (showTennisCards === false && showSoccerCards === true) ||
-      renderGame === true
+      renderGame === true || showSavedGame === true
     ) {
       setShowTennisCards(true);
       setShowSoccerCards(false);
       setRender(false);
+      setCreateOwn(false);
+      setShowSavedGame(false);
       setCurrentStreak(0);
       setLongestStreak(0);
       clearInputField();
@@ -101,7 +65,7 @@ function App() {
 
   useEffect(() => {
     setCurrentCard(0);
-  }, [showSoccerCards] || [showTennisCards] || [renderGame]);
+  }, [showSoccerCards] || [showTennisCards] || [renderGame] || [displaySavedGame]);
 
   const preventD = (e) => {
     e.preventDefault();
@@ -117,67 +81,7 @@ function App() {
     setAnswer("");
   };
 
-  const checkAnswer = () => {
-    setPrevAnswer(answer);
-    if (showSoccerCards) {
-      if (
-        soccerCards[currentCard].answer
-          .toLocaleLowerCase()
-          .includes(answer.toLocaleLowerCase()) &&
-        answer !== "" &&
-        prevAnswer !== answer
-      ) {
-        setCurrentStreak(currentStreak + 1);
-        showGreen();
-      } else {
-        if (prevAnswer != answer && answer !== "") {
-          if (currentStreak > longestStreak) {
-            setLongestStreak(currentStreak);
-          }
-          setCurrentStreak(0);
-          showRed();
-        }
-      }
-    } else if (showTennisCards) {
-      if (
-        tennisCards[currentCard].answer
-          .toLocaleLowerCase()
-          .includes(answer.toLocaleLowerCase()) &&
-        answer !== "" &&
-        prevAnswer !== answer
-      ) {
-        setCurrentStreak(currentStreak + 1);
-        showGreen();
-      } else {
-        if (prevAnswer != answer && answer !== "") {
-          if (currentStreak > longestStreak) {
-            setLongestStreak(currentStreak);
-          }
-          setCurrentStreak(0);
-          showRed();
-        }
-      }
-    } else if (renderGame) {
-      if (
-        arrayInput[currentCard].answer
-          .toLocaleLowerCase()
-          .includes(answer.toLocaleLowerCase()) &&
-        answer !== "" &&
-        prevAnswer !== answer
-      ) {
-        setCurrentStreak(currentStreak + 1);
-        showGreen();
-      } else {
-        if (prevAnswer != answer && answer !== "") {
-          if (currentStreak > longestStreak) {
-            setLongestStreak(currentStreak);
-          }
-          setCurrentStreak(0);
-          showRed();
-        }
-      }
-    }
-  };
+
 
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
@@ -227,14 +131,17 @@ function App() {
   const showCreateOwn = () => {
     if (
       (createOwn === false && showSoccerCards === true) ||
-      showTennisCards === true
+      showTennisCards === true || renderGame === true || showSavedGame === true
     ) {
       setCreateOwn(true);
       setShowSoccerCards(false);
       setShowTennisCards(false);
+      setShowSavedGame(false);
+      setRender(false);
       setCurrentStreak(0);
       setLongestStreak(0);
       clearInputField();
+
     }
   };
 
@@ -250,6 +157,8 @@ function App() {
       setCardsCreated(0);
       setCurrentCard(0);
       setPrevAnswer("");
+      setSavedGame(false);
+      localStorage.removeItem("savedGame");
     }
   };
 
@@ -316,14 +225,173 @@ function App() {
     setNumberOfCards(0);
   };
 
+  const [gameSaved, setSavedGame] = useState(false);
+  const [savedGameArrLength, setSavedGameArrLength] = useState(0);
+  const handleSaveGame = () => {
+    //save the created cards (arrayInput) to local storage
+    localStorage.setItem("savedGame", JSON.stringify(arrayInput));
+    const savedGameArray = JSON.parse(localStorage.getItem("savedGame"));
+    setSavedGameArray(savedGameArray);
+    setSavedGameArrLength(savedGameArray.length);
+    setSavedGame(true);
+  };
+
+  const [showSavedGame, setShowSavedGame] = useState(false);
+  const [savedGameArray, setSavedGameArray] = useState([]);
+
+  const displaySavedGame = () => {
+    setShowSavedGame(true);
+    setShowSoccerCards(false);
+    setShowTennisCards(false);
+    setCreateOwn(false);
+    setRender(false);
+    setCurrentStreak(0);
+    setLongestStreak(0);
+    clearInputField();
+    setCardsCreated(0);
+    setCurrentCard(0);
+    setPrevAnswer("");
+    // console.log(savedGameArray);
+  };
+
   //settting Background image of the app
   if (showSoccerCards) {
     document.body.style.backgroundImage = `url(${soccerBackground})`;
   } else if (showTennisCards) {
     document.body.style.backgroundImage = `url(${tennisBackground})`;
-  } else if (renderGame || createOwn) {
+  } else if (renderGame || createOwn || showSavedGame) {
     document.body.style.backgroundImage = `url(${creatorBackground})`;
   }
+
+  //Checking if the answer is correct
+  const checkAnswer = () => {
+    setPrevAnswer(answer);
+    if (showSoccerCards) {
+      if (
+        soccerCards[currentCard].answer
+          .toLocaleLowerCase()
+          .includes(answer.toLocaleLowerCase()) &&
+        answer !== "" &&
+        prevAnswer !== answer
+      ) {
+        setCurrentStreak(currentStreak + 1);
+        showGreen();
+      } else {
+        if (prevAnswer != answer && answer !== "") {
+          if (currentStreak > longestStreak) {
+            setLongestStreak(currentStreak);
+          }
+          setCurrentStreak(0);
+          showRed();
+        }
+      }
+    } else if (showTennisCards) {
+      if (
+        tennisCards[currentCard].answer
+          .toLocaleLowerCase()
+          .includes(answer.toLocaleLowerCase()) &&
+        answer !== "" &&
+        prevAnswer !== answer
+      ) {
+        setCurrentStreak(currentStreak + 1);
+        showGreen();
+      } else {
+        if (prevAnswer != answer && answer !== "") {
+          if (currentStreak > longestStreak) {
+            setLongestStreak(currentStreak);
+          }
+          setCurrentStreak(0);
+          showRed();
+        }
+      }
+    } else if (renderGame) {
+      if (
+        arrayInput[currentCard].answer
+          .toLocaleLowerCase()
+          .includes(answer.toLocaleLowerCase()) &&
+        answer !== "" &&
+        prevAnswer !== answer
+      ) {
+        setCurrentStreak(currentStreak + 1);
+        showGreen();
+      } else {
+        if (prevAnswer != answer && answer !== "") {
+          if (currentStreak > longestStreak) {
+            setLongestStreak(currentStreak);
+          }
+          setCurrentStreak(0);
+          showRed();
+        }
+      }
+    }else if (displaySavedGame) {
+      if (
+        savedGameArray[currentCard].answer
+          .toLocaleLowerCase()
+          .includes(answer.toLocaleLowerCase()) &&
+        answer !== "" &&
+        prevAnswer !== answer
+      ) {
+        setCurrentStreak(currentStreak + 1);
+        showGreen();
+      } else {
+        if (prevAnswer != answer && answer !== "") {
+          if (currentStreak > longestStreak) {
+            setLongestStreak(currentStreak);
+          }
+          setCurrentStreak(0);
+          showRed();
+        }
+      }
+    }
+  };
+ 
+  const handleNext = () => {
+    if (showSoccerCards) {
+      if (currentCard < soccerArrLenght - 1) {
+        setCurrentCard(currentCard + 1);
+        setIsFlipping(true);
+        setTimeout(() => {
+          setIsFlipping(false);
+        }, 700);
+      }
+    } else if (showTennisCards) {
+      if (currentCard < tennisArrLength - 1) {
+        setCurrentCard(currentCard + 1);
+        setIsFlipping(true);
+        setTimeout(() => {
+          setIsFlipping(false);
+        }, 700);
+      }
+    } else if (renderGame) {
+      if (currentCard < arrayLength - 1) {
+        setCurrentCard(currentCard + 1);
+        setIsFlipping(true);
+        setTimeout(() => {
+          setIsFlipping(false);
+        }, 700);
+      }
+    } else if (showSavedGame) {
+      if (currentCard < savedGameArrLength - 1) {
+        setCurrentCard(currentCard + 1);
+        setIsFlipping(true);
+        setTimeout(() => {
+          setIsFlipping(false);
+        }, 700);
+      }
+    }
+
+    clearInputField();
+  };
+  const handleBack = () => {
+    if (currentCard > 0) {
+      setCurrentCard(currentCard - 1);
+      setIsFlipping(true);
+      setTimeout(() => {
+        setIsFlipping(false);
+      }, 700);
+    }
+    clearInputField();
+  };
 
   if (createOwn) {
     return (
@@ -365,10 +433,10 @@ function App() {
     return (
       <div className="App">
         <StatsDashboard
-        color = {color}
-        currentStreak = {currentStreak}
-        longestStreak = {longestStreak}
-        numOfCard = {arrayInput.length}
+          color={color}
+          currentStreak={currentStreak}
+          longestStreak={longestStreak}
+          numOfCard={arrayInput.length}
         />
 
         <FlashCard
@@ -393,7 +461,12 @@ function App() {
           displaySoccerCards={displaySoccerCards}
           displayTennisCards={displayTennisCards}
           showCreateOwn={showCreateOwn}
+          isGameSaved={gameSaved}
+          displaySavedGame={displaySavedGame}
         />
+        <button className="saveQuizzBtn dropbtn" onClick={handleSaveGame}>
+          Save Quiz
+        </button>
 
         <p className="copyRight">&copy; Jassem Toumi</p>
       </div>
@@ -401,12 +474,11 @@ function App() {
   } else if (showSoccerCards) {
     return (
       <div className="App">
-
         <StatsDashboard
-        color = {color}
-        currentStreak = {currentStreak}
-        longestStreak = {longestStreak}
-        numOfCard = {soccerArrLenght}
+          color={color}
+          currentStreak={currentStreak}
+          longestStreak={longestStreak}
+          numOfCard={soccerArrLenght}
         />
 
         <FlashCard
@@ -431,6 +503,8 @@ function App() {
           displaySoccerCards={displaySoccerCards}
           displayTennisCards={displayTennisCards}
           showCreateOwn={showCreateOwn}
+          isGameSaved={gameSaved}
+          displaySavedGame={displaySavedGame}
         />
 
         <p className="copyRight">&copy; Jassem Toumi</p>
@@ -439,12 +513,11 @@ function App() {
   } else if (showTennisCards) {
     return (
       <div className="App">
-
         <StatsDashboard
-        color = {color}
-        currentStreak = {currentStreak}
-        longestStreak = {longestStreak}
-        numOfCard = {tennisArrLength}
+          color={color}
+          currentStreak={currentStreak}
+          longestStreak={longestStreak}
+          numOfCard={tennisArrLength}
         />
         <FlashCard
           data={tennisCards}
@@ -467,6 +540,45 @@ function App() {
           displaySoccerCards={displaySoccerCards}
           displayTennisCards={displayTennisCards}
           showCreateOwn={showCreateOwn}
+          isGameSaved={gameSaved}
+          displaySavedGame={displaySavedGame}
+        />
+
+        <p className="copyRight">&copy; Jassem Toumi</p>
+      </div>
+    );
+  } else if (showSavedGame) {
+    return (
+      <div className="App">
+        <StatsDashboard
+          color={color}
+          currentStreak={currentStreak}
+          longestStreak={longestStreak}
+          numOfCard={savedGameArray.length}
+        />
+        <FlashCard
+          data={savedGameArray}
+          currentCard={currentCard}
+          isflipped={isflipped}
+          handleClick={handleClick}
+          isflipping={isflipping}
+        />
+        <Controls
+          preventD={preventD}
+          handleInputChange={handleInputChange}
+          answer={answer}
+          checkAnswer={checkAnswer}
+          handleBack={handleBack}
+          handleNext={handleNext}
+          handleShuffle={handleShuffle}
+        />
+
+        <DropDown
+          displaySoccerCards={displaySoccerCards}
+          displayTennisCards={displayTennisCards}
+          showCreateOwn={showCreateOwn}
+          isGameSaved={gameSaved}
+          displaySavedGame={displaySavedGame}
         />
 
         <p className="copyRight">&copy; Jassem Toumi</p>

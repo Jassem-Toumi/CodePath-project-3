@@ -1,6 +1,6 @@
 import React from "react";
 
-const DropDown = ({displaySoccerCards, displayTennisCards, showCreateOwn}) => {
+const DropDown = ({displaySoccerCards, displayTennisCards, showCreateOwn, isGameSaved,displaySavedGame}) => {
   return (
     <div className="dropdown">
       <button className="dropbtn">Select Topic</button>
@@ -8,6 +8,7 @@ const DropDown = ({displaySoccerCards, displayTennisCards, showCreateOwn}) => {
         <span onClick={displaySoccerCards}>Soccer</span>
         <span onClick={displayTennisCards}>Tennis</span>
         <span onClick={showCreateOwn}>Create your own</span>
+        `{isGameSaved ? <span onClick={displaySavedGame}>My saved game</span> : null}`
       </div>
     </div>
   );
